@@ -38,12 +38,16 @@ class Upsert:
     def __getattr__(self, name):
         return getattr(self.implementation, name)
 
-    def row(self, selector, setter = None):
+    def row(self, selector, setter = None, commit=True):
         if setter is None:
             setter = {}
         self.buffer.append(self.row_class(self, selector, setter))
-        self.ready()
+        if commit:
+            self.ready()
         return None
+        
+    def commit(self):
+        self.ready()
 
     def execute3(self, template, idents, values):
         pass1 = self.fill_ident_placeholders(template, idents)
